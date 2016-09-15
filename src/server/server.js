@@ -1,4 +1,6 @@
 import {createServer} from 'http';
+import {resolve} from 'path';
+
 import codes from 'statuses/codes.json';
 import compression from 'compression';
 import parseUrl from 'parseurl';
@@ -42,8 +44,9 @@ export default class Server {
     }
 
     const pathname = parseUrl(req).pathname;
-    const stream = send(req, pathname);
+    const root = resolve('dist');
 
+    const stream = send(req, pathname, {root: root});
     stream.on('error', (err) => this.handleError(err, req, res));
     stream.pipe(res);
   }

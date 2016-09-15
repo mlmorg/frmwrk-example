@@ -31,7 +31,7 @@ rollup.rollup({
 }).then(function (bundle) {
   bundle.write({
     format: 'cjs',
-    dest: 'dist/browser/main.js'
+    dest: 'dist/_assets/browser/main.js'
   })
 }).catch(function (err) {
   console.log(err);
