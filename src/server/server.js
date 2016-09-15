@@ -1,11 +1,13 @@
 import {createServer} from 'http';
+import codes from 'statuses/codes.json';
+import compression from 'compression';
 import parseUrl from 'parseurl';
 import send from 'send';
-import codes from 'statuses/codes.json';
 
 export default class Server {
   constructor() {
     this.logger = console;
+    this.compress = compression();
     this.server = createServer(this.handleRequest.bind(this));
 
     this.server.on('error', (err) => this.onError(err));
@@ -14,6 +16,9 @@ export default class Server {
 
   handleRequest(req, res) {
     req.urlParts = req.url.split('/');
+
+    // Compression middleware
+    this.compress(req, res, () => {});
 
     // Static Assets
     if (req.urlParts[1] === '_assets') {
