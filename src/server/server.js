@@ -8,8 +8,8 @@ export default class Server {
     this.logger = console;
     this.server = createServer(this.handleRequest.bind(this));
 
-    this.server.on('error', this.onError.bind(this));
-    this.server.on('listening', this.onListen.bind(this));
+    this.server.on('error', (err) => this.onError(err));
+    this.server.on('listening', () => this.onListen());
   }
 
   handleRequest(req, res) {
@@ -33,27 +33,33 @@ export default class Server {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       const methodError = new Error('Method not allowed for assets');
       methodError.statusCode = 405;
-      return this.handleStatusCode(methodError, req, res);
+      return this.handleError(methodError, req, res);
     }
+
+    const pathname = parseUrl(req).pathname;
+    const stream = send(req, pathname);
+
+    stream.on('error', (err) => this.handleError(err, req, res));
+    stream.pipe(res);
   }
 
   handleApi(req, res) {
-
+    const NotFound = new Error('API Not Implemented Yet');
+    NotFound.statusCode = 404;
+    this.handleError(NotFound);
   }
 
   handleApp(req, res) {
-
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('OK');
   }
 
   handleError(err, req, res) {
     const statusCode = err.statusCode || 500;
-
-  }
-
-  handleStatusCode(statusCode, req, res) {
-    const statusError = new Error(codes[statusCode]);
-    statusError.statusCode = statusCode;
-    this.handleError(statusError, req, res);
+    const errorMessage = codes[statusCode];
+    this.logger.log(err);
+    res.writeHead(statusCode, {'Content-Type': 'text/plain'});
+    res.end(errorMessage);
   }
 
   listen() {
@@ -61,6 +67,7 @@ export default class Server {
   }
 
   onError(err) {
+    console.log(err.statusCode);
     throw err;
   }
 

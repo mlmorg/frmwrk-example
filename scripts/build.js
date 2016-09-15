@@ -18,3 +18,19 @@ rollup.rollup({
 }).catch(function (err) {
   console.log(err);
 });
+
+rollup.rollup({
+  entry: 'src/browser/main.js',
+  plugins: [
+    nodeResolve(),
+    commonjs(),
+    json()
+  ]
+}).then(function (bundle) {
+  bundle.write({
+    format: 'cjs',
+    dest: 'dist/browser/main.js'
+  })
+}).catch(function (err) {
+  console.log(err);
+});
