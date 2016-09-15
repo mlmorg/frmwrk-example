@@ -3,6 +3,7 @@ var commonjs = require('rollup-plugin-commonjs');
 var json = require('rollup-plugin-json');
 var nodeResolve = require('rollup-plugin-node-resolve');
 var rollup = require('rollup');
+var uglify = require('rollup-plugin-uglify');
 
 rollup.rollup({
   entry: 'src/server/main.js',
@@ -26,7 +27,8 @@ rollup.rollup({
     nodeResolve(),
     commonjs(),
     json(),
-    babel()
+    babel(),
+    uglify()
   ]
 }).then(function (bundle) {
   bundle.write({
