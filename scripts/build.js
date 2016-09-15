@@ -1,7 +1,8 @@
-var rollup = require('rollup');
-var nodeResolve = require('rollup-plugin-node-resolve');
+var babel = require('rollup-plugin-babel');
 var commonjs = require('rollup-plugin-commonjs');
 var json = require('rollup-plugin-json');
+var nodeResolve = require('rollup-plugin-node-resolve');
+var rollup = require('rollup');
 
 rollup.rollup({
   entry: 'src/server/main.js',
@@ -24,7 +25,8 @@ rollup.rollup({
   plugins: [
     nodeResolve(),
     commonjs(),
-    json()
+    json(),
+    babel()
   ]
 }).then(function (bundle) {
   bundle.write({
